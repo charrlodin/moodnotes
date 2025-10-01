@@ -135,12 +135,12 @@ const AUDIO_TRACKS: AudioTrack[] = [
   {
     id: '1',
     name: 'Distant Horizons',
-    url: '/Distant Horizons.mp3',
+    url: '/distant-horizons.mp3',
   },
   {
     id: '2',
     name: 'Ocean Calm',
-    url: '/Ocean Calm.mp3',
+    url: '/ocean-calm.mp3',
   },
   {
     id: '3',
@@ -150,12 +150,12 @@ const AUDIO_TRACKS: AudioTrack[] = [
   {
     id: '4',
     name: 'Weightless Whispers',
-    url: '/Weightless Whispers.mp3',
+    url: '/weightless-whispers.mp3',
   },
   {
     id: '5',
     name: "Winter's Breath",
-    url: "/Winter's Breath.mp3",
+    url: '/winters-breath.mp3',
   },
 ];
 
