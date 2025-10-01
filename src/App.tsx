@@ -160,7 +160,7 @@ function App() {
     if (loadedTrackRef.current !== currentTrack.id) {
       audio.pause();
       audio.src = currentTrack.url;
-      audio.volume = 0.25;
+      audio.volume = 0;
       audio.loop = true;
       loadedTrackRef.current = currentTrack.id;
       audio.load();
@@ -180,6 +180,43 @@ function App() {
       audio.pause();
     }
   }, [currentTrack, isPlaying]);
+
+  // Audio fade in/out effect for seamless looping
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !isPlaying) return;
+
+    const FADE_IN_DURATION = 10; // 10 seconds
+    const FADE_OUT_START = 30; // Start fading 30s before end
+    const TARGET_VOLUME = 0.25;
+
+    const handleTimeUpdate = () => {
+      const currentTime = audio.currentTime;
+      const duration = audio.duration;
+
+      if (isNaN(duration)) return;
+
+      // Fade in at the beginning
+      if (currentTime < FADE_IN_DURATION) {
+        audio.volume = (currentTime / FADE_IN_DURATION) * TARGET_VOLUME;
+      }
+      // Fade out before the end
+      else if (duration - currentTime < FADE_OUT_START) {
+        const timeUntilEnd = duration - currentTime;
+        audio.volume = (timeUntilEnd / FADE_OUT_START) * TARGET_VOLUME;
+      }
+      // Normal volume in the middle
+      else {
+        audio.volume = TARGET_VOLUME;
+      }
+    };
+
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+
+    return () => {
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
+    };
+  }, [isPlaying]);
 
   const toggleFocusMode = useCallback(async () => {
     if (!focusMode) {
@@ -244,7 +281,8 @@ function App() {
         limitToBounds={false}
         panning={{ 
           disabled: false,
-          velocityDisabled: false
+          velocityDisabled: false,
+          excluded: ['note-container', 'textarea', 'button', 'resize-handle']
         }}
         wheel={{ 
           disabled: focusMode,
