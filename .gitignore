@@ -23,11 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
-# Audio files (users will add their own)
-public/*.mp3
-public/*.wav
-public/*.ogg
-!public/vite.svg
+# Note: Audio files are included in the repo for demo purposes
+# Users can replace them with their own tracks
 
 # Environment files
 .env
