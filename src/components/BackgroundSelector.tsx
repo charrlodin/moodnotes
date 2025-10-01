@@ -173,8 +173,11 @@ export default function BackgroundSelector({
             <div className="text-white/40 text-xs">
               <kbd className="font-mono bg-white/10 px-2 py-1 rounded">←→↑↓</kbd> Navigate · <kbd className="font-mono bg-white/10 px-2 py-1 rounded">Enter</kbd> Select · <kbd className="font-mono bg-white/10 px-2 py-1 rounded">ESC</kbd> Close
             </div>
-            <div className="text-white/30 text-xs">
-              Images provided by <a href="https://github.com/D3Ext/aesthetic-wallpapers" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white/70 underline">D3Ext/aesthetic-wallpapers</a>
+            <div className="text-white/40 text-xs font-serif italic">
+              Wallpapers from{' '}
+              <a href="https://github.com/D3Ext/aesthetic-wallpapers" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-white/80 underline transition-colors">
+                D3Ext/aesthetic-wallpapers
+              </a>
             </div>
           </div>
         </motion.div>
