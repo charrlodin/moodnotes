@@ -262,35 +262,49 @@ function App() {
         {({ zoomIn, zoomOut, resetTransform }) => (
           <>
             {!focusMode && (
-              <div className="absolute left-6 bottom-6 z-50 flex flex-col gap-2">
-                <button
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.3 }}
+                className="absolute left-6 top-6 z-50 flex gap-2"
+              >
+                <motion.button
                   onClick={() => zoomIn()}
-                  className="w-12 h-12 rounded-full backdrop-blur-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all duration-200 border border-white/20 hover:scale-110"
+                  whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.25)" }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="w-11 h-11 rounded-full backdrop-blur-xl bg-white/10 text-white flex items-center justify-center border border-white/20"
                   title="Zoom In"
                 >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
-                </button>
-                <button
+                </motion.button>
+                <motion.button
                   onClick={() => zoomOut()}
-                  className="w-12 h-12 rounded-full backdrop-blur-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all duration-200 border border-white/20 hover:scale-110"
+                  whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.25)" }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="w-11 h-11 rounded-full backdrop-blur-xl bg-white/10 text-white flex items-center justify-center border border-white/20"
                   title="Zoom Out"
                 >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                   </svg>
-                </button>
-                <button
+                </motion.button>
+                <motion.button
                   onClick={() => resetTransform()}
-                  className="w-12 h-12 rounded-full backdrop-blur-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all duration-200 border border-white/20 hover:scale-110"
+                  whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.25)" }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="w-11 h-11 rounded-full backdrop-blur-xl bg-white/10 text-white flex items-center justify-center border border-white/20"
                   title="Reset View"
                 >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                   </svg>
-                </button>
-              </div>
+                </motion.button>
+              </motion.div>
             )}
             
             <TransformComponent

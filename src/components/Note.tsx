@@ -16,6 +16,7 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const noteRef = useRef<HTMLDivElement>(null);
   const dragStartPos = useRef({ x: 0, y: 0 });
+  const resizeStartPos = useRef({ x: 0, y: 0 });
   const resizeStartSize = useRef({ width: 0, height: 0 });
   const hasFocusedRef = useRef(false);
 
@@ -65,13 +66,13 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
       const newY = e.clientY - dragStartPos.current.y;
       onUpdate(note.id, { x: newX, y: newY });
     } else if (isResizing) {
-      const deltaX = e.clientX - (note.x + resizeStartSize.current.width);
-      const deltaY = e.clientY - (note.y + resizeStartSize.current.height);
-      const newWidth = Math.max(300, resizeStartSize.current.width + deltaX);
-      const newHeight = Math.max(200, resizeStartSize.current.height + deltaY);
+      const deltaX = e.clientX - resizeStartPos.current.x;
+      const deltaY = e.clientY - resizeStartPos.current.y;
+      const newWidth = Math.max(250, resizeStartSize.current.width + deltaX);
+      const newHeight = Math.max(150, resizeStartSize.current.height + deltaY);
       onUpdate(note.id, { width: newWidth, height: newHeight });
     }
-  }, [isDragging, isResizing, note.id, note.x, note.y, onUpdate]);
+  }, [isDragging, isResizing, note.id, onUpdate]);
 
   const handleMouseUp = useCallback((e: MouseEvent) => {
     e.preventDefault();
@@ -99,6 +100,7 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
     e.stopPropagation();
     setIsResizing(true);
     setIsFocused(false);
+    resizeStartPos.current = { x: e.clientX, y: e.clientY };
     resizeStartSize.current = { width: note.width, height: note.height };
   };
 
