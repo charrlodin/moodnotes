@@ -4,6 +4,7 @@ import { AudioTrack } from '../types';
 
 interface AudioPlayerProps {
   tracks: AudioTrack[];
+  audioRef: React.RefObject<HTMLAudioElement>;
   currentTrack: AudioTrack | null;
   isPlaying: boolean;
   onTrackChange: (track: AudioTrack | null) => void;
@@ -12,7 +13,8 @@ interface AudioPlayerProps {
 }
 
 export default function AudioPlayer({ 
-  tracks, 
+  tracks,
+  audioRef,
   currentTrack, 
   isPlaying, 
   onTrackChange, 
@@ -167,9 +169,8 @@ export default function AudioPlayer({
                 onChange={(e) => {
                   const newVolume = parseFloat(e.target.value);
                   setVolume(newVolume);
-                  const audio = document.querySelector('audio');
-                  if (audio) {
-                    audio.volume = newVolume;
+                  if (audioRef.current) {
+                    audioRef.current.volume = newVolume;
                   }
                 }}
                 className="flex-1 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"

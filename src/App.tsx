@@ -526,6 +526,7 @@ function App() {
         {showAudioPlayer && (
           <AudioPlayer
             tracks={AUDIO_TRACKS}
+            audioRef={audioRef}
             currentTrack={currentTrack}
             isPlaying={isPlaying}
             onTrackChange={setCurrentTrack}
