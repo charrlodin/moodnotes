@@ -67,27 +67,31 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
     e.stopPropagation();
     
     if (isDragging && noteRef.current) {
-      // Get the parent container to calculate canvas coordinates
-      const parent = noteRef.current.parentElement;
-      if (parent) {
-        const parentRect = parent.getBoundingClientRect();
-        
-        // Calculate new position in canvas coordinates
-        // Screen position relative to parent, adjusted for initial offset
-        const screenX = e.clientX - parentRect.left;
-        const screenY = e.clientY - parentRect.top;
-        
-        // Get the transform scale from the parent
-        const transform = window.getComputedStyle(parent).transform;
+      // Get the transform wrapper (grandparent with the zoom/pan transform)
+      let transformContainer = noteRef.current.parentElement?.parentElement;
+      
+      // Navigate up to find the actual TransformComponent wrapper
+      while (transformContainer && !transformContainer.style.transform && transformContainer.parentElement) {
+        transformContainer = transformContainer.parentElement;
+      }
+      
+      if (transformContainer) {
+        // Get the transform values
+        const transform = window.getComputedStyle(transformContainer).transform;
         let scale = 1;
+        let translateX = 0;
+        let translateY = 0;
+        
         if (transform && transform !== 'none') {
           const matrix = new DOMMatrix(transform);
-          scale = matrix.a; // scale is the first value in the matrix
+          scale = matrix.a; // scale
+          translateX = matrix.e; // translateX
+          translateY = matrix.f; // translateY
         }
         
-        // Convert to canvas coordinates
-        const canvasX = screenX / scale - dragStartPos.current.x / scale;
-        const canvasY = screenY / scale - dragStartPos.current.y / scale;
+        // Calculate position in canvas coordinates
+        const canvasX = (e.clientX - translateX) / scale - dragStartPos.current.x;
+        const canvasY = (e.clientY - translateY) / scale - dragStartPos.current.y;
         
         onUpdate(note.id, { x: canvasX, y: canvasY });
       }
