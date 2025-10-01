@@ -84,7 +84,15 @@ export default function BackgroundSelector({
             {backgrounds.map((bg, index) => (
               <motion.button
                 key={bg.id}
-                whileHover={{ scale: 1.05 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ 
+                  delay: index * 0.05,
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 20
+                }}
+                whileHover={{ scale: 1.08, y: -4 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onSelect(bg)}
                 className={`relative aspect-video rounded-xl overflow-hidden border-2 transition-all duration-200 ${

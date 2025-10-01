@@ -110,10 +110,26 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
   return (
     <motion.div
       ref={noteRef}
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.8 }}
-      transition={{ duration: 0.2 }}
+      initial={{ opacity: 0, scale: 0.95, y: -10 }}
+      animate={{ 
+        opacity: 1, 
+        scale: 1, 
+        y: 0,
+        transition: {
+          type: "spring",
+          stiffness: 300,
+          damping: 25
+        }
+      }}
+      exit={{ 
+        opacity: 0, 
+        scale: 0.9,
+        transition: { duration: 0.15 }
+      }}
+      whileHover={!isDragging && !isResizing ? { 
+        scale: 1.01,
+        transition: { duration: 0.2 }
+      } : {}}
       className={`absolute group note-container ${isDragging ? 'cursor-grabbing' : isResizing ? 'cursor-nwse-resize' : focusMode ? 'cursor-default' : 'cursor-grab'}`}
       style={{
         left: note.x,
@@ -130,8 +146,8 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
       onDoubleClick={(e) => e.stopPropagation()}
     >
       <div
-        className={`relative w-full h-full rounded-2xl backdrop-blur-2xl bg-white/20 border transition-all duration-200 ${
-          isFocused ? 'border-white/40 shadow-2xl' : 'border-white/20 shadow-xl'
+        className={`relative w-full h-full rounded-2xl backdrop-blur-2xl bg-white/20 border transition-all duration-300 ease-out ${
+          isFocused ? 'border-white/40 shadow-2xl ring-2 ring-white/10' : 'border-white/20 shadow-xl'
         }`}
         style={{
           backdropFilter: 'blur(40px) saturate(180%)',

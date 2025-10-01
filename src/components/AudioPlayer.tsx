@@ -102,18 +102,28 @@ export default function AudioPlayer({
           </div>
 
           <div className="space-y-3 mb-6">
-            {tracks.map((track) => (
-              <button
+            {tracks.map((track, index) => (
+              <motion.button
                 key={track.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ 
+                  delay: index * 0.08,
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 20
+                }}
+                whileHover={{ scale: 1.02, x: 4 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => handleTrackSelect(track)}
-                className={`w-full px-4 py-3 rounded-xl text-left transition-all duration-200 ${
+                className={`w-full px-4 py-3 rounded-xl text-left transition-all duration-300 ${
                   currentTrack?.id === track.id
                     ? 'bg-white/20 border-2 border-white/40'
-                    : 'bg-white/10 border-2 border-white/20 hover:bg-white/15'
+                    : 'bg-white/10 border-2 border-white/20'
                 }`}
               >
                 <span className="text-white font-serif italic">{track.name}</span>
-              </button>
+              </motion.button>
             ))}
           </div>
 

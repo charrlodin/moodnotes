@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
+import { motion } from 'framer-motion';
 import Note from './components/Note';
 import BackgroundSelector from './components/BackgroundSelector';
 import AudioPlayer from './components/AudioPlayer';
@@ -237,69 +238,136 @@ function App() {
 
       <TransformWrapper
         initialScale={1}
-        minScale={0.1}
-        maxScale={4}
+        minScale={0.5}
+        maxScale={3}
         centerOnInit
         limitToBounds={false}
         panning={{ 
-          disabled: true
+          disabled: false,
+          velocityDisabled: false
         }}
-        wheel={{ disabled: focusMode }}
+        wheel={{ 
+          disabled: focusMode,
+          smoothStep: 0.005,
+          step: 0.1
+        }}
         doubleClick={{ disabled: true }}
+        velocityAnimation={{
+          sensitivity: 1,
+          animationTime: 400,
+          animationType: "easeOutQuart",
+          disabled: false
+        }}
       >
-        <TransformComponent
-          wrapperClass="!w-full !h-full"
-          contentClass="!w-full !h-full"
-        >
-          <div className="relative" style={{ width: '10000px', height: '10000px' }}>
-            {notes.map((note) => (
-              <Note
-                key={note.id}
-                note={note}
-                onUpdate={updateNote}
-                onDelete={deleteNote}
-                focusMode={focusMode}
-              />
-            ))}
-          </div>
-        </TransformComponent>
+        {({ zoomIn, zoomOut, resetTransform }) => (
+          <>
+            {!focusMode && (
+              <div className="absolute left-6 bottom-6 z-50 flex flex-col gap-2">
+                <button
+                  onClick={() => zoomIn()}
+                  className="w-12 h-12 rounded-full backdrop-blur-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all duration-200 border border-white/20 hover:scale-110"
+                  title="Zoom In"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => zoomOut()}
+                  className="w-12 h-12 rounded-full backdrop-blur-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all duration-200 border border-white/20 hover:scale-110"
+                  title="Zoom Out"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => resetTransform()}
+                  className="w-12 h-12 rounded-full backdrop-blur-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all duration-200 border border-white/20 hover:scale-110"
+                  title="Reset View"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                </button>
+              </div>
+            )}
+            
+            <TransformComponent
+              wrapperClass="!w-full !h-full"
+              contentClass="!w-full !h-full"
+            >
+              <div className="relative" style={{ width: '10000px', height: '10000px' }}>
+                {notes.map((note) => (
+                  <Note
+                    key={note.id}
+                    note={note}
+                    onUpdate={updateNote}
+                    onDelete={deleteNote}
+                    focusMode={focusMode}
+                  />
+                ))}
+              </div>
+            </TransformComponent>
+          </>
+        )}
       </TransformWrapper>
 
       {!focusMode && (
-        <div className="absolute top-6 right-6 flex flex-col gap-3 z-50">
-        <button
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="absolute top-6 right-6 flex flex-col gap-3 z-50"
+        >
+        <motion.button
           onClick={() => setShowBackgroundSelector((prev) => !prev)}
-          className="px-4 py-2 rounded-full backdrop-blur-xl bg-white/10 hover:bg-white/20 text-white font-sans font-medium transition-all duration-200 border border-white/20"
+          whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.25)" }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          className="px-4 py-2 rounded-full backdrop-blur-xl bg-white/10 text-white font-sans font-medium border border-white/20"
         >
           Background
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           onClick={() => setShowAudioPlayer((prev) => !prev)}
-          className="px-4 py-2 rounded-full backdrop-blur-xl bg-white/10 hover:bg-white/20 text-white font-sans font-medium transition-all duration-200 border border-white/20"
+          whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.25)" }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          className="px-4 py-2 rounded-full backdrop-blur-xl bg-white/10 text-white font-sans font-medium border border-white/20"
         >
           Audio
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           onClick={createNote}
-          className="px-4 py-2 rounded-full backdrop-blur-xl bg-white/10 hover:bg-white/20 text-white font-sans font-medium transition-all duration-200 border border-white/20"
+          whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.25)" }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          className="px-4 py-2 rounded-full backdrop-blur-xl bg-white/10 text-white font-sans font-medium border border-white/20"
         >
           + Note
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           onClick={exportNotes}
           disabled={notes.length === 0}
-          className="px-4 py-2 rounded-full backdrop-blur-xl bg-white/10 hover:bg-white/20 text-white font-sans font-medium transition-all duration-200 border border-white/20 disabled:opacity-50 disabled:cursor-not-allowed"
+          whileHover={notes.length > 0 ? { scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.25)" } : {}}
+          whileTap={notes.length > 0 ? { scale: 0.95 } : {}}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          className="px-4 py-2 rounded-full backdrop-blur-xl bg-white/10 text-white font-sans font-medium border border-white/20 disabled:opacity-50 disabled:cursor-not-allowed"
           title="Export notes as JSON"
         >
           Export
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           onClick={toggleFocusMode}
-          className="px-4 py-2 rounded-full backdrop-blur-xl bg-white/10 hover:bg-white/20 text-white font-sans font-medium transition-all duration-200 border border-white/20"
+          whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.25)" }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          className="px-4 py-2 rounded-full backdrop-blur-xl bg-white/10 text-white font-sans font-medium border border-white/20"
         >
           Focus
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
       )}
 
       {showBackgroundSelector && (
