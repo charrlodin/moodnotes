@@ -51,20 +51,46 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
-    dragStartPos.current = {
-      x: e.clientX - note.x,
-      y: e.clientY - note.y,
-    };
+    
+    // Store the offset from cursor to note's top-left corner in screen coordinates
+    if (noteRef.current) {
+      const rect = noteRef.current.getBoundingClientRect();
+      dragStartPos.current = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      };
+    }
   };
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
-    if (isDragging) {
-      const newX = e.clientX - dragStartPos.current.x;
-      const newY = e.clientY - dragStartPos.current.y;
-      onUpdate(note.id, { x: newX, y: newY });
+    if (isDragging && noteRef.current) {
+      // Get the parent container to calculate canvas coordinates
+      const parent = noteRef.current.parentElement;
+      if (parent) {
+        const parentRect = parent.getBoundingClientRect();
+        
+        // Calculate new position in canvas coordinates
+        // Screen position relative to parent, adjusted for initial offset
+        const screenX = e.clientX - parentRect.left;
+        const screenY = e.clientY - parentRect.top;
+        
+        // Get the transform scale from the parent
+        const transform = window.getComputedStyle(parent).transform;
+        let scale = 1;
+        if (transform && transform !== 'none') {
+          const matrix = new DOMMatrix(transform);
+          scale = matrix.a; // scale is the first value in the matrix
+        }
+        
+        // Convert to canvas coordinates
+        const canvasX = screenX / scale - dragStartPos.current.x / scale;
+        const canvasY = screenY / scale - dragStartPos.current.y / scale;
+        
+        onUpdate(note.id, { x: canvasX, y: canvasY });
+      }
     } else if (isResizing) {
       const deltaX = e.clientX - resizeStartPos.current.x;
       const deltaY = e.clientY - resizeStartPos.current.y;

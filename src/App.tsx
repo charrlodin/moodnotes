@@ -104,22 +104,26 @@ function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const loadedTrackRef = useRef<string | null>(null);
 
+  const transformStateRef = useRef({ scale: 1, positionX: 0, positionY: 0 });
+
   const createNote = useCallback(() => {
     setNotes((prev) => {
-      let x = window.innerWidth / 2 - 200;
-      let y = window.innerHeight / 2 - 150;
+      // Calculate viewport center in canvas coordinates
+      const viewportCenterX = window.innerWidth / 2;
+      const viewportCenterY = window.innerHeight / 2;
       
-      if (prev.length > 0) {
-        const offset = (prev.length % 10) * 30;
-        x = x + offset;
-        y = y + offset;
-      }
+      // Convert viewport coordinates to canvas coordinates accounting for zoom and pan
+      const canvasX = (viewportCenterX - transformStateRef.current.positionX) / transformStateRef.current.scale;
+      const canvasY = (viewportCenterY - transformStateRef.current.positionY) / transformStateRef.current.scale;
+      
+      // Add small offset for multiple notes
+      const offset = (prev.length % 10) * 30;
       
       const newNote: NoteType = {
         id: Date.now().toString(),
         content: '',
-        x,
-        y,
+        x: canvasX - 200 + offset, // Center the note (400px width / 2)
+        y: canvasY - 150 + offset, // Center the note (300px height / 2)
         width: 400,
         height: 300,
         createdAt: Date.now(),
@@ -297,7 +301,18 @@ function App() {
           disabled: false
         }}
       >
-        {({ zoomIn, zoomOut, resetTransform }) => (
+        {({ zoomIn, zoomOut, resetTransform, instance }) => {
+          // Track transform state for note creation
+          if (instance) {
+            const state = instance.transformState;
+            transformStateRef.current = {
+              scale: state.scale,
+              positionX: state.positionX,
+              positionY: state.positionY
+            };
+          }
+          
+          return (
           <>
             {!focusMode && (
               <motion.div 
@@ -362,7 +377,8 @@ function App() {
               </div>
             </TransformComponent>
           </>
-        )}
+        );
+        }}
       </TransformWrapper>
 
       {!focusMode && (
