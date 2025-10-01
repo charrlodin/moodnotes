@@ -21,7 +21,6 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const [showColorPicker, setShowColorPicker] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const noteRef = useRef<HTMLDivElement>(null);
   const dragStartPos = useRef({ x: 0, y: 0 });
@@ -209,12 +208,6 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
         style={{
           backdropFilter: 'blur(40px) saturate(180%)',
         }}
-        onContextMenu={(e) => {
-          if (!focusMode) {
-            e.preventDefault();
-            setShowColorPicker(!showColorPicker);
-          }
-        }}
       >
         {/* Drag handle area - top bar */}
         <div 
@@ -230,28 +223,28 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
           </span>
         </div>
 
-        {/* Color picker */}
-        {showColorPicker && !focusMode && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: -5 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="absolute top-12 right-3 z-20 flex gap-2 p-2 rounded-lg backdrop-blur-xl bg-black/40 border border-white/20"
-          >
-            {(Object.keys(NOTE_COLORS) as Array<keyof typeof NOTE_COLORS>).map((color) => (
-              <button
-                key={color}
-                onClick={() => {
-                  onUpdate(note.id, { color });
-                  setShowColorPicker(false);
-                }}
-                className={`w-6 h-6 rounded-full transition-all duration-200 ${NOTE_COLORS[color]} hover:scale-110 ${
-                  note.color === color || (color === 'default' && !note.color) ? 'ring-2 ring-white/50' : ''
-                }`}
-                title={color}
-              />
-            ))}
-          </motion.div>
-        )}
+        {/* Color picker - shows on hover at bottom */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.15 }}
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex gap-2 p-2 rounded-full backdrop-blur-xl bg-black/40 border border-white/20 opacity-0 group-hover:opacity-100"
+        >
+          {(Object.keys(NOTE_COLORS) as Array<keyof typeof NOTE_COLORS>).map((color) => (
+            <button
+              key={color}
+              onClick={(e) => {
+                e.stopPropagation();
+                onUpdate(note.id, { color });
+              }}
+              className={`w-5 h-5 rounded-full transition-all duration-200 ${NOTE_COLORS[color]} hover:scale-125 ${
+                note.color === color || (color === 'default' && !note.color) ? 'ring-2 ring-white/60' : ''
+              }`}
+              title={color}
+            />
+          ))}
+        </motion.div>
 
         <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-2 z-10">
           <button
