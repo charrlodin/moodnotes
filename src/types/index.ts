@@ -6,6 +6,7 @@ export interface Note {
   width: number;
   height: number;
   createdAt: number;
+  color?: 'default' | 'blue' | 'purple' | 'amber' | 'emerald';
 }
 
 export interface AudioTrack {

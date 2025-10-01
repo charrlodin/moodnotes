@@ -6,6 +6,7 @@ import BackgroundSelector from './components/BackgroundSelector';
 import AudioPlayer from './components/AudioPlayer';
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import { useLocalStorage } from './hooks/useLocalStorage';
+import { useUndoRedo } from './hooks/useUndoRedo';
 import { Note as NoteType, BackgroundImage, AudioTrack } from './types';
 
 const DEFAULT_BACKGROUNDS: BackgroundImage[] = [
@@ -161,6 +162,7 @@ const AUDIO_TRACKS: AudioTrack[] = [
 
 function App() {
   const [notes, setNotes] = useLocalStorage<NoteType[]>('ambient-notes', []);
+  const { saveState, undo, redo } = useUndoRedo(notes);
   const [selectedBackground, setSelectedBackground] = useLocalStorage<BackgroundImage>(
     'ambient-background',
     DEFAULT_BACKGROUNDS[0]
@@ -203,15 +205,44 @@ function App() {
     });
   }, [setNotes]);
 
-  const updateNote = useCallback((id: string, updates: Partial<NoteType>) => {
-    setNotes((prev) =>
-      prev.map((note) => (note.id === id ? { ...note, ...updates } : note))
-    );
-  }, [setNotes]);
+  const updateNote = useCallback(
+    (id: string, updates: Partial<NoteType>) => {
+      setNotes((prev) => {
+        const newNotes = prev.map((note) => (note.id === id ? { ...note, ...updates } : note));
+        // Only save to history if it's a significant change (not just typing)
+        if (updates.x !== undefined || updates.y !== undefined || updates.width !== undefined || updates.height !== undefined || updates.color !== undefined) {
+          saveState(newNotes, 'update');
+        }
+        return newNotes;
+      });
+    },
+    [setNotes, saveState]
+  );
 
-  const deleteNote = useCallback((id: string) => {
-    setNotes((prev) => prev.filter((note) => note.id !== id));
-  }, [setNotes]);
+  const deleteNote = useCallback(
+    (id: string) => {
+      setNotes((prev) => {
+        const newNotes = prev.filter((note) => note.id !== id);
+        saveState(newNotes, 'delete');
+        return newNotes;
+      });
+    },
+    [setNotes, saveState]
+  );
+
+  const handleUndo = useCallback(() => {
+    const prevState = undo();
+    if (prevState) {
+      setNotes(prevState);
+    }
+  }, [undo, setNotes]);
+
+  const handleRedo = useCallback(() => {
+    const nextState = redo();
+    if (nextState) {
+      setNotes(nextState);
+    }
+  }, [redo, setNotes]);
 
   const exportNotes = useCallback(() => {
     const dataStr = JSON.stringify(notes, null, 2);
@@ -335,6 +366,8 @@ function App() {
     onToggleBackground: () => setShowBackgroundSelector((prev) => !prev),
     onToggleAudio: () => setShowAudioPlayer((prev) => !prev),
     onToggleFocus: toggleFocusMode,
+    onUndo: handleUndo,
+    onRedo: handleRedo,
     focusMode,
   });
 

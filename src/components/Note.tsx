@@ -9,10 +9,19 @@ interface NoteProps {
   focusMode: boolean;
 }
 
+const NOTE_COLORS = {
+  default: 'bg-white/20 border-white/20',
+  blue: 'bg-blue-500/20 border-blue-400/30',
+  purple: 'bg-purple-500/20 border-purple-400/30',
+  amber: 'bg-amber-500/20 border-amber-400/30',
+  emerald: 'bg-emerald-500/20 border-emerald-400/30',
+};
+
 export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [showColorPicker, setShowColorPicker] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const noteRef = useRef<HTMLDivElement>(null);
   const dragStartPos = useRef({ x: 0, y: 0 });
@@ -192,11 +201,19 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
       onDoubleClick={(e) => e.stopPropagation()}
     >
       <div
-        className={`relative w-full h-full rounded-2xl backdrop-blur-2xl bg-white/20 border transition-all duration-300 ease-out ${
-          isFocused ? 'border-white/40 shadow-2xl ring-2 ring-white/10' : 'border-white/20 shadow-xl'
+        className={`relative w-full h-full rounded-2xl backdrop-blur-2xl border transition-all duration-300 ease-out ${
+          NOTE_COLORS[note.color || 'default']
+        } ${
+          isFocused ? 'shadow-2xl ring-2 ring-white/10' : 'shadow-xl'
         }`}
         style={{
           backdropFilter: 'blur(40px) saturate(180%)',
+        }}
+        onContextMenu={(e) => {
+          if (!focusMode) {
+            e.preventDefault();
+            setShowColorPicker(!showColorPicker);
+          }
         }}
       >
         {/* Drag handle area - top bar */}
@@ -212,6 +229,29 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
             {formatTimestamp(note.createdAt)}
           </span>
         </div>
+
+        {/* Color picker */}
+        {showColorPicker && !focusMode && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: -5 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="absolute top-12 right-3 z-20 flex gap-2 p-2 rounded-lg backdrop-blur-xl bg-black/40 border border-white/20"
+          >
+            {(Object.keys(NOTE_COLORS) as Array<keyof typeof NOTE_COLORS>).map((color) => (
+              <button
+                key={color}
+                onClick={() => {
+                  onUpdate(note.id, { color });
+                  setShowColorPicker(false);
+                }}
+                className={`w-6 h-6 rounded-full transition-all duration-200 ${NOTE_COLORS[color]} hover:scale-110 ${
+                  note.color === color || (color === 'default' && !note.color) ? 'ring-2 ring-white/50' : ''
+                }`}
+                title={color}
+              />
+            ))}
+          </motion.div>
+        )}
 
         <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-2 z-10">
           <button
