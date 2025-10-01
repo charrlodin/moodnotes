@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Note from './components/Note';
 import BackgroundSelector from './components/BackgroundSelector';
 import AudioPlayer from './components/AudioPlayer';
+import ShortcutsMenu from './components/ShortcutsMenu';
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useUndoRedo } from './hooks/useUndoRedo';
@@ -169,6 +170,7 @@ function App() {
   );
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
   const [showAudioPlayer, setShowAudioPlayer] = useState(false);
+  const [showShortcutsMenu, setShowShortcutsMenu] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
   const [currentTrack, setCurrentTrack] = useLocalStorage<AudioTrack | null>('current-track', AUDIO_TRACKS[0]);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -369,6 +371,7 @@ function App() {
     onToggleBackground: () => setShowBackgroundSelector((prev) => !prev),
     onToggleAudio: () => setShowAudioPlayer((prev) => !prev),
     onToggleFocus: toggleFocusMode,
+    onToggleShortcuts: () => setShowShortcutsMenu((prev) => !prev),
     onUndo: handleUndo,
     onRedo: handleRedo,
     focusMode,
@@ -557,6 +560,16 @@ function App() {
         >
           Focus
         </motion.button>
+        <motion.button
+          onClick={() => setShowShortcutsMenu(true)}
+          whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.25)" }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          className="w-10 h-10 rounded-full backdrop-blur-xl bg-white/10 text-white font-sans font-medium border border-white/20 flex items-center justify-center text-lg"
+          title="Shortcuts (Ctrl+/)"
+        >
+          ?
+        </motion.button>
       </motion.div>
       )}
 
@@ -587,6 +600,11 @@ function App() {
           />
         )}
       </AnimatePresence>
+
+      <ShortcutsMenu
+        isOpen={showShortcutsMenu}
+        onClose={() => setShowShortcutsMenu(false)}
+      />
 
       <audio 
         ref={audioRef} 

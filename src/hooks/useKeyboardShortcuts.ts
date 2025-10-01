@@ -5,6 +5,7 @@ interface KeyboardShortcutsConfig {
   onToggleBackground: () => void;
   onToggleAudio: () => void;
   onToggleFocus: () => void;
+  onToggleShortcuts?: () => void;
   onUndo?: () => void;
   onRedo?: () => void;
   focusMode: boolean;
@@ -15,6 +16,7 @@ export default function useKeyboardShortcuts({
   onToggleBackground,
   onToggleAudio,
   onToggleFocus,
+  onToggleShortcuts,
   onUndo,
   onRedo,
   focusMode,
@@ -106,10 +108,18 @@ export default function useKeyboardShortcuts({
           onToggleFocus();
           return;
         }
+        
+        // Ctrl+/: Shortcuts menu
+        if (e.key === '/' && onToggleShortcuts) {
+          e.preventDefault();
+          e.stopPropagation();
+          onToggleShortcuts();
+          return;
+        }
       }
     };
 
     document.addEventListener('keydown', handleKeyDown, true);
     return () => document.removeEventListener('keydown', handleKeyDown, true);
-  }, [onNewNote, onToggleBackground, onToggleAudio, onToggleFocus, onUndo, onRedo, focusMode]);
+  }, [onNewNote, onToggleBackground, onToggleAudio, onToggleFocus, onToggleShortcuts, onUndo, onRedo, focusMode]);
 }
