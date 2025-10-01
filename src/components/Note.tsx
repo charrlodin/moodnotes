@@ -20,6 +20,20 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
   const resizeStartSize = useRef({ width: 0, height: 0 });
   const hasFocusedRef = useRef(false);
 
+  // Format timestamp
+  const formatTimestamp = (timestamp: number) => {
+    const date = new Date(timestamp);
+    const day = date.getDate();
+    const suffix = day === 1 || day === 21 || day === 31 ? 'st' :
+                   day === 2 || day === 22 ? 'nd' :
+                   day === 3 || day === 23 ? 'rd' : 'th';
+    const month = date.toLocaleString('en-GB', { month: 'short' });
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${day}${suffix} ${month} ${year}, ${hours}:${minutes}`;
+  };
+
   useEffect(() => {
     if (!hasFocusedRef.current && textareaRef.current && note.content === '') {
       setTimeout(() => {
@@ -192,6 +206,13 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
           style={{ zIndex: 5 }}
         />
         
+        {/* Timestamp */}
+        <div className="absolute top-3 left-3 pointer-events-none z-10">
+          <span className="text-white/40 text-xs font-serif italic">
+            {formatTimestamp(note.createdAt)}
+          </span>
+        </div>
+
         <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-2 z-10">
           <button
             onClick={handleDelete}
