@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Note from './components/Note';
 import BackgroundSelector from './components/BackgroundSelector';
 import AudioPlayer from './components/AudioPlayer';
@@ -384,28 +384,32 @@ function App() {
       </motion.div>
       )}
 
-      {showBackgroundSelector && (
-        <BackgroundSelector
-          backgrounds={DEFAULT_BACKGROUNDS}
-          selectedBackground={selectedBackground}
-          onSelect={(bg) => {
-            setSelectedBackground(bg);
-            setShowBackgroundSelector(false);
-          }}
-          onClose={() => setShowBackgroundSelector(false)}
-        />
-      )}
+      <AnimatePresence>
+        {showBackgroundSelector && (
+          <BackgroundSelector
+            backgrounds={DEFAULT_BACKGROUNDS}
+            selectedBackground={selectedBackground}
+            onSelect={(bg) => {
+              setSelectedBackground(bg);
+              setShowBackgroundSelector(false);
+            }}
+            onClose={() => setShowBackgroundSelector(false)}
+          />
+        )}
+      </AnimatePresence>
 
-      {showAudioPlayer && (
-        <AudioPlayer
-          tracks={AUDIO_TRACKS}
-          currentTrack={currentTrack}
-          isPlaying={isPlaying}
-          onTrackChange={setCurrentTrack}
-          onPlayingChange={setIsPlaying}
-          onClose={() => setShowAudioPlayer(false)}
-        />
-      )}
+      <AnimatePresence>
+        {showAudioPlayer && (
+          <AudioPlayer
+            tracks={AUDIO_TRACKS}
+            currentTrack={currentTrack}
+            isPlaying={isPlaying}
+            onTrackChange={setCurrentTrack}
+            onPlayingChange={setIsPlaying}
+            onClose={() => setShowAudioPlayer(false)}
+          />
+        )}
+      </AnimatePresence>
 
       <audio 
         ref={audioRef} 
