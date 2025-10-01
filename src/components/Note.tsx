@@ -223,14 +223,8 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
           </span>
         </div>
 
-        {/* Color picker - shows on hover at bottom */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 10 }}
-          transition={{ duration: 0.15 }}
-          className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex gap-2 p-2 rounded-full backdrop-blur-xl bg-black/40 border border-white/20 opacity-0 group-hover:opacity-100"
-        >
+        {/* Color picker - tiny swatches on hover only */}
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-10 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto">
           {(Object.keys(NOTE_COLORS) as Array<keyof typeof NOTE_COLORS>).map((color) => (
             <button
               key={color}
@@ -238,13 +232,13 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
                 e.stopPropagation();
                 onUpdate(note.id, { color });
               }}
-              className={`w-5 h-5 rounded-full transition-all duration-200 ${NOTE_COLORS[color]} hover:scale-125 ${
-                note.color === color || (color === 'default' && !note.color) ? 'ring-2 ring-white/60' : ''
+              className={`w-3 h-3 rounded-full transition-all duration-200 ${NOTE_COLORS[color]} hover:scale-150 border border-white/30 ${
+                note.color === color || (color === 'default' && !note.color) ? 'ring-1 ring-white/80 scale-110' : ''
               }`}
               title={color}
             />
           ))}
-        </motion.div>
+        </div>
 
         <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-2 z-10">
           <button
