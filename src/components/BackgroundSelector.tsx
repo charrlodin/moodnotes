@@ -16,11 +16,20 @@ export default function BackgroundSelector({
   onClose,
 }: BackgroundSelectorProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  const ITEMS_PER_PAGE = 12;
+  
+  const totalPages = Math.ceil(backgrounds.length / ITEMS_PER_PAGE);
+  const startIndex = currentPage * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentBackgrounds = backgrounds.slice(startIndex, endIndex);
 
   useEffect(() => {
     const index = backgrounds.findIndex(bg => bg.id === selectedBackground.id);
     if (index !== -1) {
       setSelectedIndex(index);
+      // Set page to where the selected background is
+      setCurrentPage(Math.floor(index / ITEMS_PER_PAGE));
     }
   }, [selectedBackground, backgrounds]);
 
@@ -80,8 +89,8 @@ export default function BackgroundSelector({
             </button>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {backgrounds.map((bg, index) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+            {currentBackgrounds.map((bg, index) => (
               <motion.button
                 key={bg.id}
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -127,8 +136,40 @@ export default function BackgroundSelector({
               </motion.button>
             ))}
           </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <motion.button
+                onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
+                disabled={currentPage === 0}
+                whileHover={currentPage > 0 ? { scale: 1.05 } : {}}
+                whileTap={currentPage > 0 ? { scale: 0.95 } : {}}
+                className={`px-4 py-2 rounded-full backdrop-blur-xl bg-white/10 text-white font-sans transition-all duration-200 border border-white/20 ${
+                  currentPage === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/20'
+                }`}
+              >
+                ← Previous
+              </motion.button>
+              
+              <span className="text-white/70 font-sans text-sm">
+                Page {currentPage + 1} of {totalPages}
+              </span>
+              
+              <motion.button
+                onClick={() => setCurrentPage(Math.min(totalPages - 1, currentPage + 1))}
+                disabled={currentPage === totalPages - 1}
+                whileHover={currentPage < totalPages - 1 ? { scale: 1.05 } : {}}
+                whileTap={currentPage < totalPages - 1 ? { scale: 0.95 } : {}}
+                className={`px-4 py-2 rounded-full backdrop-blur-xl bg-white/10 text-white font-sans transition-all duration-200 border border-white/20 ${
+                  currentPage === totalPages - 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/20'
+                }`}
+              >
+                Next →
+              </motion.button>
+            </div>
+          )}
           
-          <div className="text-center space-y-2 mt-6">
+          <div className="text-center space-y-2">
             <div className="text-white/40 text-xs">
               <kbd className="font-mono bg-white/10 px-2 py-1 rounded">←→↑↓</kbd> Navigate · <kbd className="font-mono bg-white/10 px-2 py-1 rounded">Enter</kbd> Select · <kbd className="font-mono bg-white/10 px-2 py-1 rounded">ESC</kbd> Close
             </div>

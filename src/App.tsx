@@ -59,6 +59,76 @@ const DEFAULT_BACKGROUNDS: BackgroundImage[] = [
     name: 'Kyoto Sunset',
     url: 'https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/yellow_kyoto.jpg',
   },
+  {
+    id: '11',
+    name: 'Mountain Lake',
+    url: 'https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/lake.jpg',
+  },
+  {
+    id: '12',
+    name: 'Purple Nebula',
+    url: 'https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/purple.png',
+  },
+  {
+    id: '13',
+    name: 'Starry Night',
+    url: 'https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/stars.jpg',
+  },
+  {
+    id: '14',
+    name: 'Sunset Beach',
+    url: 'https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/beach.jpg',
+  },
+  {
+    id: '15',
+    name: 'City Lights',
+    url: 'https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/city.jpg',
+  },
+  {
+    id: '16',
+    name: 'Cherry Blossoms',
+    url: 'https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/sakura.jpg',
+  },
+  {
+    id: '17',
+    name: 'Northern Lights',
+    url: 'https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/aurora.jpg',
+  },
+  {
+    id: '18',
+    name: 'Desert Dunes',
+    url: 'https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/desert.jpg',
+  },
+  {
+    id: '19',
+    name: 'Misty Valley',
+    url: 'https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/valley.jpg',
+  },
+  {
+    id: '20',
+    name: 'Blue Gradient',
+    url: 'https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/blue.png',
+  },
+  {
+    id: '21',
+    name: 'Tropical Paradise',
+    url: 'https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/tropical.jpg',
+  },
+  {
+    id: '22',
+    name: 'Cosmic Space',
+    url: 'https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/space.jpg',
+  },
+  {
+    id: '23',
+    name: 'Golden Wheat',
+    url: 'https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/wheat.jpg',
+  },
+  {
+    id: '24',
+    name: 'Pink Clouds',
+    url: 'https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/pink-clouds.jpg',
+  },
 ];
 
 const AUDIO_TRACKS: AudioTrack[] = [
