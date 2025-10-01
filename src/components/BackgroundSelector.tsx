@@ -73,14 +73,14 @@ export default function BackgroundSelector({
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-white/10 backdrop-blur-2xl rounded-3xl p-6 max-w-2xl w-full mx-4 border border-white/20 max-h-[85vh] overflow-y-auto"
+          className="bg-white/10 backdrop-blur-2xl rounded-3xl p-6 max-w-2xl w-full mx-4 border border-white/20 max-h-[75vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
           style={{
             backdropFilter: 'blur(40px) saturate(180%)',
           }}
         >
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-medium text-white font-sans">Select Background</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-medium text-white font-sans">Select Background</h2>
             <button
               onClick={onClose}
               className="w-8 h-8 rounded-full backdrop-blur-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all duration-200"
@@ -89,7 +89,7 @@ export default function BackgroundSelector({
             </button>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
             {currentBackgrounds.map((bg, index) => (
               <motion.button
                 key={bg.id}
@@ -138,7 +138,7 @@ export default function BackgroundSelector({
           </div>
 
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-4 mb-4">
+            <div className="flex items-center justify-center gap-3 mb-3">
               <motion.button
                 onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
                 disabled={currentPage === 0}
@@ -169,13 +169,15 @@ export default function BackgroundSelector({
             </div>
           )}
           
-          <div className="text-center space-y-2">
-            <div className="text-white/40 text-xs">
-              <kbd className="font-mono bg-white/10 px-2 py-1 rounded">←→↑↓</kbd> Navigate · <kbd className="font-mono bg-white/10 px-2 py-1 rounded">Enter</kbd> Select · <kbd className="font-mono bg-white/10 px-2 py-1 rounded">ESC</kbd> Close
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-3 border-t border-white/10">
+            <div className="text-white/40 text-xs text-center sm:text-left">
+              <kbd className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-[10px]">←→↑↓</kbd> Navigate · 
+              <kbd className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-[10px]">Enter</kbd> Select · 
+              <kbd className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-[10px]">ESC</kbd> Close
             </div>
-            <div className="text-white/40 text-xs font-serif italic">
-              Wallpapers from{' '}
-              <a href="https://github.com/D3Ext/aesthetic-wallpapers" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-white/80 underline transition-colors">
+            <div className="text-white/50 text-xs font-serif italic">
+              from{' '}
+              <a href="https://github.com/D3Ext/aesthetic-wallpapers" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white/90 underline transition-colors">
                 D3Ext/aesthetic-wallpapers
               </a>
             </div>
