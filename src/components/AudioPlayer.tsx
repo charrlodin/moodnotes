@@ -82,9 +82,10 @@ export default function AudioPlayer({
         onClick={onClose}
       >
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
+          initial={{ scale: 0.96, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
+          exit={{ scale: 0.96, opacity: 0 }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
           className="bg-white/10 backdrop-blur-2xl rounded-3xl p-8 max-w-md w-full mx-4 border border-white/20"
           onClick={(e) => e.stopPropagation()}
           style={{
@@ -105,16 +106,15 @@ export default function AudioPlayer({
             {tracks.map((track, index) => (
               <motion.button
                 key={track.id}
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ 
-                  delay: index * 0.08,
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 20
+                  delay: index * 0.03,
+                  duration: 0.15,
+                  ease: "easeOut"
                 }}
-                whileHover={{ scale: 1.02, x: 4 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
                 onClick={() => handleTrackSelect(track)}
                 className={`w-full px-4 py-3 rounded-xl text-left transition-all duration-300 ${
                   currentTrack?.id === track.id

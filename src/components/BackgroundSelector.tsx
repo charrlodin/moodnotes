@@ -70,9 +70,10 @@ export default function BackgroundSelector({
         onClick={onClose}
       >
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
+          initial={{ scale: 0.96, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
+          exit={{ scale: 0.96, opacity: 0 }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
           className="bg-white/10 backdrop-blur-2xl rounded-3xl p-6 max-w-2xl w-full mx-4 border border-white/20 max-h-[75vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
           style={{
@@ -93,16 +94,15 @@ export default function BackgroundSelector({
             {currentBackgrounds.map((bg, index) => (
               <motion.button
                 key={bg.id}
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ 
-                  delay: index * 0.05,
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 20
+                  delay: index * 0.02,
+                  duration: 0.15,
+                  ease: "easeOut"
                 }}
-                whileHover={{ scale: 1.08, y: -4 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => onSelect(bg)}
                 className={`relative aspect-video rounded-xl overflow-hidden border-2 transition-all duration-200 ${
                   selectedIndex === index
