@@ -20,6 +20,12 @@ export default function useKeyboardShortcuts({
       const target = e.target as HTMLElement;
       const isInTextarea = target.tagName === 'TEXTAREA' || target.tagName === 'INPUT';
       
+      // Don't intercept shortcuts when modals are open (they handle their own ESC)
+      const hasModal = document.querySelector('.fixed.inset-0.bg-black\\/50');
+      if (hasModal && e.key === 'Escape') {
+        return; // Let modal handle it
+      }
+      
       // ESC key handling
       if (e.key === 'Escape') {
         if (focusMode && isInTextarea) {
@@ -47,30 +53,34 @@ export default function useKeyboardShortcuts({
         return;
       }
 
-      // Allow all Ctrl shortcuts even when typing
+      // Allow all Ctrl shortcuts
       if (e.ctrlKey || e.metaKey) {
-        if (e.key === 'n') {
+        // Ctrl+N: New note (works everywhere)
+        if (e.key === 'n' || e.key === 'N') {
           e.preventDefault();
           e.stopPropagation();
           onNewNote();
           return;
         }
         
-        if (e.key === 'b' && !isInTextarea) {
+        // Ctrl+B: Background selector (not in textareas)
+        if ((e.key === 'b' || e.key === 'B') && !isInTextarea) {
           e.preventDefault();
           e.stopPropagation();
           onToggleBackground();
           return;
         }
         
-        if (e.key === 'm' && !isInTextarea) {
+        // Ctrl+M: Audio player (not in textareas)
+        if ((e.key === 'm' || e.key === 'M') && !isInTextarea) {
           e.preventDefault();
           e.stopPropagation();
           onToggleAudio();
           return;
         }
         
-        if (e.key === 'f' && !isInTextarea) {
+        // Ctrl+F: Focus mode (not in textareas to avoid Find conflict)
+        if ((e.key === 'f' || e.key === 'F') && !isInTextarea) {
           e.preventDefault();
           e.stopPropagation();
           onToggleFocus();
