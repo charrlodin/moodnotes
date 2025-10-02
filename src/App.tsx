@@ -131,6 +131,42 @@ const DEFAULT_BACKGROUNDS: BackgroundImage[] = [
     name: 'T-Rex',
     url: 'https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/Trex.jpg',
   },
+  // Atmospheric Mood Wallpapers - 8K/4K Quality from Unsplash
+  // Space & Cosmos
+  { id: 'space-01', name: 'Milky Way', url: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?q=80&w=3840' },
+  { id: 'space-02', name: 'Starry Night', url: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=3840' },
+  { id: 'space-03', name: 'Northern Lights', url: 'https://images.unsplash.com/photo-1464802686167-b939a6910659?q=80&w=3840' },
+  { id: 'space-04', name: 'Galaxy Nebula', url: 'https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?q=80&w=3840' },
+  { id: 'space-05', name: 'Mountain Stars', url: 'https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=3840' },
+  // Water & Ocean
+  { id: 'water-01', name: 'Calm Ocean', url: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?q=80&w=3840' },
+  { id: 'water-02', name: 'Misty Lake', url: 'https://images.unsplash.com/photo-1439405326854-014607f694d7?q=80&w=3840' },
+  { id: 'water-03', name: 'Beach Sunset', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=3840' },
+  { id: 'water-04', name: 'Underwater Blue', url: 'https://images.unsplash.com/photo-1476673160081-cf065607f449?q=80&w=3840' },
+  { id: 'water-05', name: 'Ocean Golden Hour', url: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?q=80&w=3840' },
+  // Rain & Storms
+  { id: 'rain-01', name: 'Rain Droplets', url: 'https://images.unsplash.com/photo-1428908728789-d2de25dbd4e2?q=80&w=3840' },
+  { id: 'rain-02', name: 'Storm Clouds', url: 'https://images.unsplash.com/photo-1513002749550-c59d786b8e6c?q=80&w=3840' },
+  { id: 'rain-03', name: 'Stormy Ocean', url: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?q=80&w=3840' },
+  // Snow & Winter
+  { id: 'snow-01', name: 'Snowy Mountains', url: 'https://images.unsplash.com/photo-1483921020237-2ff51e8e4b22?q=80&w=3840' },
+  { id: 'snow-02', name: 'Winter Forest', url: 'https://images.unsplash.com/photo-1478827536114-da961b7f86c0?q=80&w=3840' },
+  { id: 'snow-03', name: 'Snow Trees', url: 'https://images.unsplash.com/photo-1491002052546-bf38f186af56?q=80&w=3840' },
+  { id: 'snow-04', name: 'Icy Landscape', url: 'https://images.unsplash.com/photo-1511131341194-24e2eeeebb09?q=80&w=3840' },
+  { id: 'snow-05', name: 'Snowy Peaks', url: 'https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?q=80&w=3840' },
+  // Seasons - Autumn
+  { id: 'autumn-01', name: 'Fall Forest', url: 'https://images.unsplash.com/photo-1476400424721-e25994a9f0ff?q=80&w=3840' },
+  { id: 'autumn-02', name: 'Autumn Path', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=3840' },
+  { id: 'autumn-03', name: 'Golden Trees', url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=3840' },
+  // Seasons - Spring/Summer
+  { id: 'spring-01', name: 'Mountain Landscape', url: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=3840' },
+  { id: 'spring-02', name: 'Alpine Meadow', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=3840' },
+  { id: 'summer-01', name: 'Forest Lake', url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=3840' },
+  // Atmospheric/Moody
+  { id: 'mood-01', name: 'Foggy Forest', url: 'https://images.unsplash.com/photo-1426604966848-d7adac402bff?q=80&w=3840' },
+  { id: 'mood-02', name: 'Misty Mountains', url: 'https://images.unsplash.com/photo-1475274047050-1d0c0975c63e?q=80&w=3840' },
+  { id: 'mood-03', name: 'Ethereal Sunset', url: 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?q=80&w=3840' },
+  { id: 'mood-04', name: 'Serene Landscape', url: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?q=80&w=3840' },
 ];
 
 const AUDIO_TRACKS: AudioTrack[] = [
