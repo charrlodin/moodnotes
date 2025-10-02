@@ -9,6 +9,14 @@ interface NoteProps {
   focusMode: boolean;
 }
 
+const NOTE_COLORS = {
+  default: 'bg-white/20 border-white/20',
+  blue: 'bg-blue-500/20 border-blue-400/30',
+  purple: 'bg-purple-500/20 border-purple-400/30',
+  amber: 'bg-amber-500/20 border-amber-400/30',
+  emerald: 'bg-emerald-500/20 border-emerald-400/30',
+};
+
 export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
@@ -192,8 +200,10 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
       onDoubleClick={(e) => e.stopPropagation()}
     >
       <div
-        className={`relative w-full h-full rounded-2xl backdrop-blur-2xl bg-white/20 border transition-all duration-300 ease-out ${
-          isFocused ? 'border-white/40 shadow-2xl ring-2 ring-white/10' : 'border-white/20 shadow-xl'
+        className={`relative w-full h-full rounded-2xl backdrop-blur-2xl border transition-all duration-300 ease-out ${
+          NOTE_COLORS[note.color || 'default']
+        } ${
+          isFocused ? 'shadow-2xl ring-2 ring-white/10' : 'shadow-xl'
         }`}
         style={{
           backdropFilter: 'blur(40px) saturate(180%)',
@@ -211,6 +221,23 @@ export default function Note({ note, onUpdate, onDelete, focusMode }: NoteProps)
           <span className="text-white/40 text-xs font-serif italic">
             {formatTimestamp(note.createdAt)}
           </span>
+        </div>
+
+        {/* Color picker - tiny swatches on hover only */}
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-10 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto">
+          {(Object.keys(NOTE_COLORS) as Array<keyof typeof NOTE_COLORS>).map((color) => (
+            <button
+              key={color}
+              onClick={(e) => {
+                e.stopPropagation();
+                onUpdate(note.id, { color });
+              }}
+              className={`w-3 h-3 rounded-full transition-all duration-200 ${NOTE_COLORS[color]} hover:scale-150 border border-white/30 ${
+                note.color === color || (color === 'default' && !note.color) ? 'ring-1 ring-white/80 scale-110' : ''
+              }`}
+              title={color}
+            />
+          ))}
         </div>
 
         <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-2 z-10">

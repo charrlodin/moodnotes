@@ -4,8 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Note from './components/Note';
 import BackgroundSelector from './components/BackgroundSelector';
 import AudioPlayer from './components/AudioPlayer';
+import ShortcutsMenu from './components/ShortcutsMenu';
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import { useLocalStorage } from './hooks/useLocalStorage';
+import { useUndoRedo } from './hooks/useUndoRedo';
 import { Note as NoteType, BackgroundImage, AudioTrack } from './types';
 
 const DEFAULT_BACKGROUNDS: BackgroundImage[] = [
@@ -161,12 +163,14 @@ const AUDIO_TRACKS: AudioTrack[] = [
 
 function App() {
   const [notes, setNotes] = useLocalStorage<NoteType[]>('ambient-notes', []);
+  const { saveState, undo, redo } = useUndoRedo(notes);
   const [selectedBackground, setSelectedBackground] = useLocalStorage<BackgroundImage>(
     'ambient-background',
     DEFAULT_BACKGROUNDS[0]
   );
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
   const [showAudioPlayer, setShowAudioPlayer] = useState(false);
+  const [showShortcutsMenu, setShowShortcutsMenu] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
   const [currentTrack, setCurrentTrack] = useLocalStorage<AudioTrack | null>('current-track', AUDIO_TRACKS[0]);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -176,42 +180,84 @@ function App() {
 
   const transformStateRef = useRef({ scale: 1, positionX: 0, positionY: 0 });
 
-  const createNote = useCallback(() => {
+  const createNote = useCallback((x?: number, y?: number) => {
     setNotes((prev) => {
-      // Calculate viewport center in canvas coordinates
-      const viewportCenterX = window.innerWidth / 2;
-      const viewportCenterY = window.innerHeight / 2;
+      let canvasX, canvasY;
       
-      // Convert viewport coordinates to canvas coordinates accounting for zoom and pan
-      const canvasX = (viewportCenterX - transformStateRef.current.positionX) / transformStateRef.current.scale;
-      const canvasY = (viewportCenterY - transformStateRef.current.positionY) / transformStateRef.current.scale;
-      
-      // Add small offset for multiple notes
-      const offset = (prev.length % 10) * 30;
+      if (x !== undefined && y !== undefined) {
+        // Use provided coordinates (from double-click)
+        canvasX = x;
+        canvasY = y;
+      } else {
+        // Calculate viewport center in canvas coordinates
+        const viewportCenterX = window.innerWidth / 2;
+        const viewportCenterY = window.innerHeight / 2;
+        
+        // Convert viewport coordinates to canvas coordinates accounting for zoom and pan
+        canvasX = (viewportCenterX - transformStateRef.current.positionX) / transformStateRef.current.scale;
+        canvasY = (viewportCenterY - transformStateRef.current.positionY) / transformStateRef.current.scale;
+        
+        // Add small offset for multiple notes
+        const offset = (prev.length % 10) * 30;
+        canvasX += offset;
+        canvasY += offset;
+      }
       
       const newNote: NoteType = {
         id: Date.now().toString(),
         content: '',
-        x: canvasX - 200 + offset, // Center the note (400px width / 2)
-        y: canvasY - 150 + offset, // Center the note (300px height / 2)
+        x: canvasX - 200, // Center the note (400px width / 2)
+        y: canvasY - 150, // Center the note (300px height / 2)
         width: 400,
         height: 300,
         createdAt: Date.now(),
+        color: 'default',
       };
       
-      return [...prev, newNote];
+      const newNotes = [...prev, newNote];
+      saveState(newNotes, 'create');
+      return newNotes;
     });
-  }, [setNotes]);
+  }, [setNotes, saveState]);
 
-  const updateNote = useCallback((id: string, updates: Partial<NoteType>) => {
-    setNotes((prev) =>
-      prev.map((note) => (note.id === id ? { ...note, ...updates } : note))
-    );
-  }, [setNotes]);
+  const updateNote = useCallback(
+    (id: string, updates: Partial<NoteType>) => {
+      setNotes((prev) => {
+        const newNotes = prev.map((note) => (note.id === id ? { ...note, ...updates } : note));
+        // Only save to history if it's a significant change (not just typing)
+        if (updates.x !== undefined || updates.y !== undefined || updates.width !== undefined || updates.height !== undefined || updates.color !== undefined) {
+          saveState(newNotes, 'update');
+        }
+        return newNotes;
+      });
+    },
+    [setNotes, saveState]
+  );
 
-  const deleteNote = useCallback((id: string) => {
-    setNotes((prev) => prev.filter((note) => note.id !== id));
-  }, [setNotes]);
+  const deleteNote = useCallback(
+    (id: string) => {
+      setNotes((prev) => {
+        const newNotes = prev.filter((note) => note.id !== id);
+        saveState(newNotes, 'delete');
+        return newNotes;
+      });
+    },
+    [setNotes, saveState]
+  );
+
+  const handleUndo = useCallback(() => {
+    const prevState = undo();
+    if (prevState) {
+      setNotes(prevState);
+    }
+  }, [undo, setNotes]);
+
+  const handleRedo = useCallback(() => {
+    const nextState = redo();
+    if (nextState) {
+      setNotes(nextState);
+    }
+  }, [redo, setNotes]);
 
   const exportNotes = useCallback(() => {
     const dataStr = JSON.stringify(notes, null, 2);
@@ -260,27 +306,17 @@ function App() {
     const audio = audioRef.current;
     if (!audio || !isPlaying) return;
 
-    const FADE_IN_DURATION = 10; // 10 seconds
-    const FADE_OUT_START = 30; // Start fading 30s before end
+    const FADE_IN_DURATION = 3; // 3 seconds fade in
     const TARGET_VOLUME = 0.25;
 
     const handleTimeUpdate = () => {
       const currentTime = audio.currentTime;
-      const duration = audio.duration;
 
-      if (isNaN(duration)) return;
-
-      // Fade in at the beginning
       if (currentTime < FADE_IN_DURATION) {
+        // Fade in at start only
         audio.volume = (currentTime / FADE_IN_DURATION) * TARGET_VOLUME;
-      }
-      // Fade out before the end
-      else if (duration - currentTime < FADE_OUT_START) {
-        const timeUntilEnd = duration - currentTime;
-        audio.volume = (timeUntilEnd / FADE_OUT_START) * TARGET_VOLUME;
-      }
-      // Normal volume in the middle
-      else {
+      } else {
+        // Normal volume for rest of track (loop handles seamless transition)
         audio.volume = TARGET_VOLUME;
       }
     };
@@ -331,10 +367,13 @@ function App() {
   }, [focusMode]);
 
   useKeyboardShortcuts({
-    onNewNote: createNote,
+    onNewNote: () => createNote(),
     onToggleBackground: () => setShowBackgroundSelector((prev) => !prev),
     onToggleAudio: () => setShowAudioPlayer((prev) => !prev),
     onToggleFocus: toggleFocusMode,
+    onToggleShortcuts: () => setShowShortcutsMenu((prev) => !prev),
+    onUndo: handleUndo,
+    onRedo: handleRedo,
     focusMode,
   });
 
@@ -381,6 +420,18 @@ function App() {
               positionY: state.positionY
             };
           }
+
+          // Handle double-click on canvas
+          const handleCanvasDoubleClick = (e: React.MouseEvent) => {
+            // Don't create note if clicking on existing note
+            if ((e.target as HTMLElement).closest('.note-container')) {
+              return;
+            }
+            // Convert screen coordinates to canvas coordinates
+            const canvasX = (e.clientX - transformStateRef.current.positionX) / transformStateRef.current.scale;
+            const canvasY = (e.clientY - transformStateRef.current.positionY) / transformStateRef.current.scale;
+            createNote(canvasX, canvasY);
+          };
           
           return (
           <>
@@ -434,7 +485,11 @@ function App() {
               wrapperClass="!w-full !h-full"
               contentClass="!w-full !h-full"
             >
-              <div className="relative" style={{ width: '10000px', height: '10000px' }}>
+              <div 
+                className="relative" 
+                style={{ width: '10000px', height: '10000px' }}
+                onDoubleClick={handleCanvasDoubleClick}
+              >
                 {notes.map((note) => (
                   <Note
                     key={note.id}
@@ -477,7 +532,7 @@ function App() {
           Audio
         </motion.button>
         <motion.button
-          onClick={createNote}
+          onClick={() => createNote()}
           whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.25)" }}
           whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", stiffness: 400, damping: 17 }}
@@ -506,6 +561,22 @@ function App() {
           Focus
         </motion.button>
       </motion.div>
+      )}
+
+      {/* Shortcuts button - bottom right */}
+      {!focusMode && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
+          onClick={() => setShowShortcutsMenu(true)}
+          whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.25)" }}
+          whileTap={{ scale: 0.95 }}
+          className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full backdrop-blur-xl bg-white/10 text-white font-sans font-bold border border-white/20 flex items-center justify-center text-xl shadow-lg"
+          title="Shortcuts (Ctrl+/)"
+        >
+          ?
+        </motion.button>
       )}
 
       <AnimatePresence>
@@ -557,6 +628,12 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* Shortcuts menu - outside main container for proper positioning */}
+      <ShortcutsMenu
+        isOpen={showShortcutsMenu}
+        onClose={() => setShowShortcutsMenu(false)}
+      />
     </div>
   );
 }

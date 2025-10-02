@@ -5,6 +5,9 @@ interface KeyboardShortcutsConfig {
   onToggleBackground: () => void;
   onToggleAudio: () => void;
   onToggleFocus: () => void;
+  onToggleShortcuts?: () => void;
+  onUndo?: () => void;
+  onRedo?: () => void;
   focusMode: boolean;
 }
 
@@ -13,6 +16,9 @@ export default function useKeyboardShortcuts({
   onToggleBackground,
   onToggleAudio,
   onToggleFocus,
+  onToggleShortcuts,
+  onUndo,
+  onRedo,
   focusMode,
 }: KeyboardShortcutsConfig) {
   useEffect(() => {
@@ -55,6 +61,22 @@ export default function useKeyboardShortcuts({
 
       // Allow all Ctrl shortcuts
       if (e.ctrlKey || e.metaKey) {
+        // Ctrl+Z: Undo
+        if ((e.key === 'z' || e.key === 'Z') && !e.shiftKey && onUndo) {
+          e.preventDefault();
+          e.stopPropagation();
+          onUndo();
+          return;
+        }
+        
+        // Ctrl+Shift+Z: Redo
+        if ((e.key === 'z' || e.key === 'Z') && e.shiftKey && onRedo) {
+          e.preventDefault();
+          e.stopPropagation();
+          onRedo();
+          return;
+        }
+        
         // Ctrl+N: New note (works everywhere)
         if (e.key === 'n' || e.key === 'N') {
           e.preventDefault();
@@ -86,10 +108,18 @@ export default function useKeyboardShortcuts({
           onToggleFocus();
           return;
         }
+        
+        // Ctrl+/: Shortcuts menu
+        if (e.key === '/' && onToggleShortcuts) {
+          e.preventDefault();
+          e.stopPropagation();
+          onToggleShortcuts();
+          return;
+        }
       }
     };
 
     document.addEventListener('keydown', handleKeyDown, true);
     return () => document.removeEventListener('keydown', handleKeyDown, true);
-  }, [onNewNote, onToggleBackground, onToggleAudio, onToggleFocus, focusMode]);
+  }, [onNewNote, onToggleBackground, onToggleAudio, onToggleFocus, onToggleShortcuts, onUndo, onRedo, focusMode]);
 }
