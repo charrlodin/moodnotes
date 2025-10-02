@@ -560,17 +560,23 @@ function App() {
         >
           Focus
         </motion.button>
+      </motion.div>
+      )}
+
+      {/* Shortcuts button - bottom right */}
+      {!focusMode && (
         <motion.button
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
           onClick={() => setShowShortcutsMenu(true)}
-          whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.25)" }}
+          whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.25)" }}
           whileTap={{ scale: 0.95 }}
-          transition={{ type: "spring", stiffness: 400, damping: 17 }}
-          className="w-10 h-10 rounded-full backdrop-blur-xl bg-white/10 text-white font-sans font-medium border border-white/20 flex items-center justify-center text-lg"
+          className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full backdrop-blur-xl bg-white/10 text-white font-sans font-bold border border-white/20 flex items-center justify-center text-xl shadow-lg"
           title="Shortcuts (Ctrl+/)"
         >
           ?
         </motion.button>
-      </motion.div>
       )}
 
       <AnimatePresence>

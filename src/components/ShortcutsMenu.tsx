@@ -37,7 +37,7 @@ export default function ShortcutsMenu({ isOpen, onClose }: ShortcutsMenuProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[101] w-[340px] rounded-2xl backdrop-blur-2xl bg-white/10 border border-white/20 shadow-2xl p-6"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[101] w-[340px] max-h-[90vh] overflow-y-auto rounded-2xl backdrop-blur-2xl bg-white/10 border border-white/20 shadow-2xl p-6"
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
