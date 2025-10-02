@@ -607,11 +607,6 @@ function App() {
         )}
       </AnimatePresence>
 
-      <ShortcutsMenu
-        isOpen={showShortcutsMenu}
-        onClose={() => setShowShortcutsMenu(false)}
-      />
-
       <audio 
         ref={audioRef} 
         loop 
@@ -633,6 +628,12 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* Shortcuts menu - outside main container for proper positioning */}
+      <ShortcutsMenu
+        isOpen={showShortcutsMenu}
+        onClose={() => setShowShortcutsMenu(false)}
+      />
     </div>
   );
 }
